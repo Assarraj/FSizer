@@ -122,7 +122,7 @@ def export_report():
     md.MD_header(1, "More Information for each Path")
 
     for path in allPaths:
-        filename = myReport.RP_DrawFig(path, md.MD_getFilename())
+        filename = myReport.RP_DrawFig(path, md.MD_getFoldername(), md.MD_getReportpath())
         md.MD_header(2, path)
         md.MD_image('',filename, newline=True)
 

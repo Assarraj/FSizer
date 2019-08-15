@@ -7,7 +7,6 @@ import random
 
 
 class Report:
-    default_path = ".\\report"
 
     def RP_MainTable(self, path):
         myPath = Path(path)
@@ -40,7 +39,7 @@ class Report:
         elif old == new:
             return 0
 
-    def RP_DrawFig(self, path, reportName):
+    def RP_DrawFig(self, path, reportName, reportPath):
         myPath = Path(path)
         myUnit = UniConv()
 
@@ -65,7 +64,7 @@ class Report:
         plt.grid(True)
 
         filename = reportName + "_" + str(round(time() + random.random()*10000)) + ".png"
-        plt.savefig(os.path.join(self.default_path,filename),
+        plt.savefig(os.path.join(reportPath,filename),
                     format="png",
                     dpi=300)
         plt.close()

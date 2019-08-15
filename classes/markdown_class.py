@@ -6,11 +6,24 @@ class MarkDown:
     default_path = ".\\report"
 
     def __init__(self):
-        self.__filename = self.__MD_filename(datetime.datetime.now())
-        self.__file_handler = open(os.path.join(self.default_path, self.__filename), "w+")
+        self.__datetime = datetime.datetime.now()
+        self.__filename = self.__MD_filename(self.__datetime)
+        self.__foldername = self.__MD_foldername(self.__datetime)
+        self.__reportpath = os.path.join(self.default_path, self.__foldername)
+
+        # Create a folder with the new name
+        os.mkdir(self.__reportpath)
+
+        self.__file_handler = open(os.path.join(self.__reportpath, self.__filename), "w+")
 
     def MD_getFilename(self):
         return self.__filename
+
+    def MD_getFoldername(self):
+        return self.__foldername
+
+    def MD_getReportpath(self):
+        return self.__reportpath
 
     def MD_header(self, level, text):
         self.__file_handler.write("{0} {1}\r\n".format("#" * level, text))
@@ -20,6 +33,10 @@ class MarkDown:
 
     def __MD_filename(self, dt):
         return "report - ({0}-{1}-{2} {3}-{4}-{5}).md".format(
+            dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
+
+    def __MD_foldername(self, dt):
+        return "report - ({0}-{1}-{2} {3}-{4}-{5})".format(
             dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
 
     def MD_text(self, text, newline=False):
