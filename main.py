@@ -16,11 +16,14 @@ def cli():
 def check_size(path):
     """Calculate the total path size"""
     myPath = Path()
+    myUni = UniConv()
 
-    if myPath.CalculateSize(path) is True:
-        print("Added to Database!!")
-    else:
-        print("Error: Can't be added to the Database!!")
+    if myPath.AddPath(path) is True:
+        print("This {0} path had been added to Database".format(path))
+
+    fullsize = myPath.CalculateSize(path)
+
+    print("Total size of {0} : {1}".format(path, myUni.beauty_size(fullsize)))
 
 
 @cli.command()

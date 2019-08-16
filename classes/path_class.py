@@ -37,7 +37,10 @@ class Path:
                     print(ee)
         end = time.time()
 
-        return self.__Commit(path, full_size, end-start)
+        self.__Commit(path, full_size, end - start)
+
+        return full_size
+
 
     def GetSizes(self, path, count=1, reverse=False):
         result_list = []
@@ -59,14 +62,10 @@ class Path:
 
     def __Commit(self, path, totalsize, calculationTime):
         myDB = Storage()
-        try:
-            myDB.DB_AddSize(self.GetPathID(path),
-                            round(time.time()),
-                            totalsize,
-                            calculationTime)
-            return True
-        except:
-            return False
+        myDB.DB_AddSize(self.GetPathID(path),
+                        round(time.time()),
+                        totalsize,
+                        calculationTime)
 
     def RemovePath(self, path):
         myDB = Storage()
