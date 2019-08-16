@@ -2,7 +2,6 @@ import click
 from prettytable import PrettyTable
 from classes.path_class import Path
 from classes.database_class import Storage
-from classes.markdown_class import MarkDown
 from classes.report_class import Report
 from classes.unitconvertor import UniConv
 
@@ -16,9 +15,9 @@ def cli():
 @click.argument('path')
 def check_size(path):
     """Calculate the total path size"""
-    myPath = Path(path)
-    click.echo("Total size = {0:8s}".format(myPath.sizeUnit))
-    if myPath.Commit() is True:
+    myPath = Path()
+
+    if myPath.CalculateSize(path) is True:
         print("Added to Database!!")
     else:
         print("Error: Can't be added to the Database!!")
@@ -26,27 +25,34 @@ def check_size(path):
 
 @cli.command()
 @click.argument('path')
-@click.option('--count', default=1, help='Enter 0 or less for all results')
+@click.option('--count', default=0, help='Enter 0 or less for all results')
 def get_report(path, count):
     """Show a saved information about specific path"""
-    myPath = Path(path)
-    table = PrettyTable()
+    myPath = Path()
     myUnit = UniConv()
+    myDB = Storage()
 
-    table.field_names = ["#", "Time", "Size", "Path"]
+    if myDB.DB_is_new(path) is False:
+        table = PrettyTable()
 
-    for count, result in enumerate(myPath.GetSizes(count), start=1):
-        table.add_row([count, result['time_stamp'],
-                       myUnit.beauty_size(result['size']),
-                       path])
+        table.field_names = ["#", "Time", "Size", "Path"]
 
-    print(table)
+        for count, result in enumerate(myPath.GetSizes(path, count), start=1):
+            table.add_row([count,
+                           result['time_stamp'],
+                           myUnit.beauty_size(result['size']),
+                           path])
+
+        print(table)
+    else:
+        print("Sorry, The path is not exist !!")
 
 
 @cli.command()
 def list_all_paths():
     """Print a list for all saved paths in DB"""
     myDB = Storage()
+    myPath = Path()
     results = myDB.DB_GetAllPaths()
 
     table = PrettyTable()
@@ -55,8 +61,7 @@ def list_all_paths():
     table.align["Path"] = "l"
 
     for row in results:
-        myPath = Path(row)
-        table.add_row([myPath.pathID, myPath.path])
+        table.add_row([myPath.GetPathID(row['path']), row['path']])
 
     print(table)
 
@@ -66,17 +71,18 @@ def list_all_paths():
 @click.option('--yes', is_flag=True, help="Accept remove without asking")
 def remove_path(path, yes):
     """Remove specific Path form DB"""
-    myPath = Path(path)
+    myPath = Path()
     if yes is True:
-        myPath.RemovePath()
+        myPath.RemovePath(path)
         print("done")
     else:
         message = "Are you sure you want to remove \"" + path + "\"? [Y/N]"
         answer = input(message)
         if answer.upper() == "Y":
-            myPath.RemovePath()
+            myPath.RemovePath(path)
         else:
             print("Ok, nothing had been removed")
+
 
 @cli.command()
 @click.option('--yes', is_flag=True, help="Accept remove without asking")
@@ -99,37 +105,13 @@ def remove_all(yes):
 @cli.command()
 def export_report():
     """This will export a report using Markdown format"""
-    md = MarkDown()
-    myDB = Storage()
+
     myReport = Report()
 
-    md.MD_header(1, 'Index')
-    md.MD_text('[toc]', True)
-    md.MD_horizontal_rule()
-
-    md.MD_header(1, 'Shared Paths')
-
-    allPaths = myDB.DB_GetAllPaths()
-    table = []
-
-    for path in allPaths:
-        table.append(myReport.RP_MainTable(path))
-
-    md.MD_table(table)
-
-    md.MD_horizontal_rule()
-
-    md.MD_header(1, "More Information for each Path")
-
-    for path in allPaths:
-        filename = myReport.RP_DrawFig(path, md.MD_getFoldername(), md.MD_getReportpath())
-        md.MD_header(2, path)
-        md.MD_image('',filename, newline=True)
-
-
-
-
-    md.MD_commit()
+    myReport.RP_InsertIndex()
+    myReport.RP_InsertSharedPaths()
+    myReport.RP_InsertMoreInormation()
+    myReport.RP_Commit()
 
 
 if __name__ == "__main__":

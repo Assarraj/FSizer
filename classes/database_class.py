@@ -9,17 +9,15 @@ class Storage:
         self.conn.row_factory = sqlite3.Row
         self.cur = self.conn.cursor()
 
+    def DB_AddNewPath(self, path):
+        self.cur.execute("""
+        INSERT INTO paths (path) VALUES ('{0}');
+        """.format(path))
+
+        self.conn.commit()
+
+
     def DB_GetPathID(self, path):
-        """Will return the path ID and add it to the DB if it's new path"""
-
-        # Check is it new then add it to DB
-        if self.DB_is_new(path) is True:
-            self.cur.execute("""
-            INSERT INTO paths (path) VALUES ('{0}');
-            """.format(path))
-
-            self.conn.commit()
-
         # Return the PATH ID
         result = self.cur.execute("""
         SELECT path_ID FROM 'paths' WHERE UPPER(path)=UPPER('{0}');
@@ -46,22 +44,19 @@ class Storage:
 
         self.conn.commit()
 
-    def DB_GetSize(self, pathID, count):
-        if count >= 1:
-            results = self.cur.execute("""
-            SELECT time_stamp, size 
+    def DB_GetSize(self, pathID, count, reverse=False):
+        query = """SELECT time_stamp, size 
             FROM 'size' 
             WHERE path_ID = {0}
-            ORDER BY time_stamp 
-            LIMIT {1};
-            """.format(pathID, count)).fetchall()
-        elif count < 1:
-            results = self.cur.execute("""
-            SELECT time_stamp, size 
-            FROM 'size' 
-            WHERE path_ID = {0} 
-            ORDER BY time_stamp;
-            """.format(pathID)).fetchall()
+            ORDER BY time_stamp"""
+        if reverse is True:
+            query = query + " DESC"
+        if count >= 1:
+            query = query + " LIMIT {1}"
+
+        query = query + ";"
+
+        results = self.cur.execute(query.format(pathID, count)).fetchall()
 
         return results
 
@@ -72,12 +67,7 @@ class Storage:
                     ORDER BY path_ID;
                     """).fetchall()
 
-        list_results = []
-
-        for row in results:
-            list_results.append(row['path'])
-
-        return list_results
+        return results
 
     def DB_RemovePath(self, pathID):
         results = self.cur.execute("""

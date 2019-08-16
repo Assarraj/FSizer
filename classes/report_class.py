@@ -1,4 +1,6 @@
 from classes.path_class import Path
+from classes.markdown_class import MarkDown
+from classes.database_class import Storage
 from classes.unitconvertor import UniConv
 from matplotlib import pyplot as plt
 from time import time
@@ -8,24 +10,49 @@ import random
 
 class Report:
 
-    def RP_MainTable(self, path):
-        myPath = Path(path)
-        sizes = myPath.GetSizes(2)
-        myUnit = UniConv()
+    def __init__(self):
+        self.myMD = MarkDown()
+        self.myDB = Storage()
+        self.myUnit = UniConv()
 
-        row = {'ID': myPath.pathID,
-               'Path': myPath.path}
+    def RP_InsertIndex(self):
+        self.myMD.MD_header(1, 'Index')
+        self.myMD.MD_text('[toc]', True)
+        self.myMD.MD_horizontal_rule()
+
+    def RP_InsertSharedPaths(self):
+        self.myMD.MD_header(1, 'Shared Paths')
+        rows = self.myDB.DB_GetAllPaths()
+
+        table = []
+
+        for row in rows:
+            table.append(self.__RP_MainTable(row['path']))
+
+        self.myMD.MD_table(table)
+        self.myMD.MD_horizontal_rule()
+
+    def RP_InsertMoreInormation(self):
+        self.myMD.MD_header(1, "More Information for each Path")
+        paths = self.myDB.DB_GetAllPaths()
+
+        for path in paths:
+            filename = self.__RP_DrawFig(path['path'])
+            self.myMD.MD_header(2, path['path'])
+            self.myMD.MD_image('', filename, newline=True)
+
+    def __RP_MainTable(self, path):
+        myPath = Path()
+        sizes = myPath.GetSizes(path, 2, True)
+
+        row = {'ID': myPath.GetPathID(path),
+               'Path': path}
 
         for size in sizes:
-            row[str(size['time_stamp'])] = myUnit.beauty_size(size['size'])
+            row[str(size['time_stamp'])] = self.myUnit.beauty_size(size['size'])
 
         if len(sizes) > 1:
-            if self.__RP_CompareSizes(sizes[0]['size'], sizes[1]['size']) == 1:
-                row['State'] = "Decrease"
-            elif self.__RP_CompareSizes(sizes[0]['size'], sizes[1]['size']) == 2:
-                row['State'] = "Increase"
-            elif self.__RP_CompareSizes(sizes[0]['size'], sizes[1]['size']) == 0:
-                row['State'] = "The same"
+            row['State'] = self.__RP_CompareSizes(sizes[1]['size'], sizes[0]['size'])
         else:
             row['State'] = "=="
 
@@ -33,23 +60,22 @@ class Report:
 
     def __RP_CompareSizes(self, old, new):
         if old > new:
-            return 1
+            return "Decrease"
         elif old < new:
-            return 2
+            return "Increase"
         elif old == new:
-            return 0
+            return "The same"
 
-    def RP_DrawFig(self, path, reportName, reportPath):
-        myPath = Path(path)
-        myUnit = UniConv()
+    def __RP_DrawFig(self, path):
+        myPath = Path()
 
-        unit = myUnit.max_unit(myPath.maxSize)
+        unit = self.myUnit.max_unit(myPath.GetMaxSize(path))
 
         timeStamp = []
         sizeList = []
-        for size in myPath.GetSizes(0):
+        for size in myPath.GetSizes(path, 0):
             timeStamp.append(size['time_stamp'])
-            sizeList.append(myUnit.select_size(size['size'], unit))
+            sizeList.append(self.myUnit.select_size(size['size'], unit))
 
         plt.title(path)
 
@@ -59,14 +85,18 @@ class Report:
                  linewidth=4)
 
         plt.xlabel("Date")
-        plt.ylabel("Size " + myUnit.get_unit_name(unit))
+        plt.ylabel("Size " + self.myUnit.get_unit_name(unit))
 
         plt.grid(True)
 
-        filename = reportName + "_" + str(round(time() + random.random()*10000)) + ".png"
-        plt.savefig(os.path.join(reportPath,filename),
+        filename = self.myMD.MD_getFoldername() + "_" + str(round(time() + random.random()*10000)) + ".png"
+        plt.savefig(os.path.join(self.myMD.MD_getReportpath(), filename),
                     format="png",
                     dpi=300)
         plt.close()
 
         return filename
+
+    def RP_Commit(self):
+        self.myMD.MD_commit()
+
