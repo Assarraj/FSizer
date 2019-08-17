@@ -75,16 +75,22 @@ def list_all_paths():
 def remove_path(path, yes):
     """Remove specific Path form DB"""
     myPath = Path()
-    if yes is True:
-        myPath.RemovePath(path)
-        print("done")
+    myDB = Storage()
+
+    if myDB.DB_is_new(path) is True:
+        print("This {0} \nis wrong, it's not available on the DB".format(path))
     else:
-        message = "Are you sure you want to remove \"" + path + "\"? [Y/N]"
-        answer = input(message)
-        if answer.upper() == "Y":
+        if yes is True:
             myPath.RemovePath(path)
+            print("done")
         else:
-            print("Ok, nothing had been removed")
+            message = "Are you sure you want to remove \"" + path + "\"? [Y/N]"
+            answer = input(message)
+            if answer.upper() == "Y":
+                myPath.RemovePath(path)
+                print("Done!!!")
+            else:
+                print("Ok, nothing had been removed")
 
 
 @cli.command()
