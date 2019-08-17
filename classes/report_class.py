@@ -75,7 +75,7 @@ class Report:
         sizeList = []
         for size in myPath.GetSizes(path, 0):
             timeStamp.append(size['time_stamp'])
-            sizeList.append(self.myUnit.select_size(size['size'], unit))
+            sizeList.append(round(self.myUnit.select_size(size['size'], unit),2))
 
         plt.title(path)
 
