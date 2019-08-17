@@ -26,6 +26,10 @@ class UniConv:
             unit = "PBytes"
         elif i == 6:
             unit = "EBytes"
+        elif i == 7:
+            unit = "ZBytes"
+        elif i == 8:
+            unit = "YBytes"
 
         return "{0:05.2f} {1}".format(calc_size, unit)
 
@@ -62,6 +66,10 @@ class UniConv:
             unit = "PBytes"
         elif i == 6:
             unit = "EBytes"
+        elif i == 7:
+            unit = "ZBytes"
+        elif i == 8:
+            unit = "YBytes"
 
         return unit
 
