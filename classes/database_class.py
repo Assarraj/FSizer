@@ -20,7 +20,9 @@ class Storage:
     def DB_GetPathID(self, path):
         # Return the PATH ID
         result = self.cur.execute("""
-        SELECT path_ID FROM 'paths' WHERE UPPER(path)=UPPER('{0}');
+        SELECT path_ID
+        FROM 'paths'
+        WHERE UPPER(path)=UPPER('{0}');
         """.format(path)).fetchone()
 
         return result['path_ID']
@@ -38,17 +40,20 @@ class Storage:
 
     def DB_AddSize(self, PathID, TimeStamp, Size, calculationTime):
         self.cur.execute("""
-        INSERT INTO size (path_ID, time_stamp, size, time_duration) 
+        INSERT INTO 'queries' (path_ID, time_stamp, size, time_duration) 
         VALUES ({0}, {1}, {2}, {3});
         """.format(PathID, TimeStamp, Size, calculationTime))
 
         self.conn.commit()
 
     def DB_GetSize(self, pathID, count, reverse=False):
-        query = """SELECT time_stamp, size 
-            FROM 'size' 
-            WHERE path_ID = {0}
-            ORDER BY time_stamp"""
+        query = """
+        SELECT queries.time_stamp, queries.size 
+        FROM 'queries'
+        WHERE queries.path_ID = {0}
+        ORDER BY 'queries.time_stamp'
+        """
+
         if reverse is True:
             query = query + " DESC"
         if count >= 1:
@@ -63,43 +68,45 @@ class Storage:
     def DB_GetAllPaths(self):
         results = self.cur.execute("""
                     SELECT path 
-                    FROM 'paths'  
+                    FROM paths  
                     ORDER BY path_ID;
                     """).fetchall()
 
         return results
 
     def DB_RemovePath(self, pathID):
-        results = self.cur.execute("""
-                    DELETE 
-                    FROM 'paths'  
-                    WHERE path_ID = {0} 
-                    """.format(pathID))
-        results = self.cur.execute("""
-                    DELETE 
-                    FROM 'size'  
-                    WHERE path_ID = {0} 
-                    """.format(pathID))
+        self.cur.execute("""
+        DELETE 
+        FROM 'paths'
+        WHERE path_ID = {0} 
+        """.format(pathID))
+
+        self.cur.execute("""
+        DELETE 
+        FROM 'queries'  
+        WHERE path_ID = {0} 
+        """.format(pathID))
+
         self.conn.commit()
 
 
     def DB_RemoveAllPath(self):
-        results = self.cur.execute("""
-                    DELETE 
-                    FROM 'paths';   
-                    """)
-        results = self.cur.execute("""
-                    DELETE 
-                    FROM 'size';   
-                    """)
+        self.cur.execute("""
+        DELETE FROM 'paths';
+        """)
+
+        self.cur.execute("""
+        DELETE FROM 'queries';
+        """)
+
         self.conn.commit()
 
     def DB_GetMaxSize(self, pathID):
         results = self.cur.execute("""
-                        SELECT MAX(size.size)
+                        SELECT MAX(queries.size)
                         AS 'max_size'
-                        FROM size
-                        WHERE size.path_ID = {0};
+                        FROM queries
+                        WHERE queries.path_ID = {0};
                         """.format(pathID)).fetchone()
 
         return results['max_size']
