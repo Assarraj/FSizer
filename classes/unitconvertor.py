@@ -1,3 +1,5 @@
+import datetime
+
 class UniConv:
 
     def beauty_size(self, given_size):
@@ -62,3 +64,14 @@ class UniConv:
             unit = "EBytes"
 
         return unit
+
+    def get_date(self, time):
+        dt = datetime.datetime.fromtimestamp(time)
+        return "{0:02d}-{1:02d}-{2}".format(dt.day, dt.month, dt.year)
+
+    def get_timedate(self, time):
+        dt = datetime.datetime.fromtimestamp(time)
+        return "{0}-{1:02d}-{2:02d} {3:02d}-{4:02d}-{5:02d}".format(
+            dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second
+        )
+
