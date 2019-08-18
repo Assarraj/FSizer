@@ -13,7 +13,7 @@ def cli():
 
 @cli.command()
 @click.argument('path')
-def check_size(path):
+def scan(path):
     """Calculate the total path size"""
     myPath = Path()
     myUni = UniConv()
