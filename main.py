@@ -21,7 +21,7 @@ def scan(path):
     if myPath.AddPath(path) is True:
         print("This {0} path had been added to Database".format(path))
 
-    fullsize = myPath.CalculateSize(path)
+    fullsize, lastID = myPath.CalculateSize(path)
 
     print("Total size of {0} : {1}".format(path, myUni.beauty_size(fullsize)))
 

@@ -46,6 +46,8 @@ class Storage:
 
         self.conn.commit()
 
+        return self.cur.lastrowid
+
     def DB_GetSize(self, pathID, count, reverse=False):
         query = """
         SELECT queries.time_stamp, queries.size 
@@ -110,3 +112,4 @@ class Storage:
                         """.format(pathID)).fetchone()
 
         return results['max_size']
+
