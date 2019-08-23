@@ -29,7 +29,8 @@ class Storage:
 
     def DB_is_new(self, path):
         results = self.cur.execute("""
-                SELECT * FROM 'paths' 
+                SELECT * 
+                FROM 'paths' 
                 WHERE UPPER(path) = UPPER('{0}');
                 """.format(path)).fetchone()
 
@@ -112,4 +113,20 @@ class Storage:
                         """.format(pathID)).fetchone()
 
         return results['max_size']
+
+    def DB_GetFEC_ID(self, FE_name):
+        results = self.cur.execute("""
+                                SELECT FEC_ID
+                                FROM file_extensions
+                                WHERE file_extensions.FE_Name = {0}
+                                """.format(FE_name)).fetchone()
+        return results['FEC_ID']
+
+    def DB_GetFE_ID(self, FE_name):
+        results = self.cur.execute("""
+                                SELECT FE_ID
+                                FROM file_extensions
+                                WHERE file_extensions.FE_Name = {0}
+                                """.format(FE_name)).fetchone()
+        return results['FE_ID']
 
