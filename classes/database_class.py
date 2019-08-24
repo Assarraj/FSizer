@@ -21,7 +21,7 @@ class Storage:
         # Return the PATH ID
         result = self.cur.execute("""
         SELECT path_ID
-        FROM 'paths'
+        FROM paths
         WHERE UPPER(path)=UPPER('{0}');
         """.format(path)).fetchone()
 
@@ -30,7 +30,7 @@ class Storage:
     def DB_is_new(self, path):
         results = self.cur.execute("""
                 SELECT * 
-                FROM 'paths' 
+                FROM paths 
                 WHERE UPPER(path) = UPPER('{0}');
                 """.format(path)).fetchone()
 
@@ -41,7 +41,7 @@ class Storage:
 
     def DB_AddSize(self, PathID, TimeStamp, Size, calculationTime):
         self.cur.execute("""
-        INSERT INTO 'queries' (path_ID, time_stamp, size, time_duration) 
+        INSERT INTO queries (path_ID, time_stamp, size, time_duration) 
         VALUES ({0}, {1}, {2}, {3});
         """.format(PathID, TimeStamp, Size, calculationTime))
 
@@ -52,9 +52,9 @@ class Storage:
     def DB_GetSize(self, pathID, count, reverse=False):
         query = """
         SELECT queries.time_stamp, queries.size 
-        FROM 'queries'
+        FROM queries
         WHERE queries.path_ID = {0}
-        ORDER BY 'queries.time_stamp'
+        ORDER BY queries.time_stamp
         """
 
         if reverse is True:
@@ -80,13 +80,13 @@ class Storage:
     def DB_RemovePath(self, pathID):
         self.cur.execute("""
         DELETE 
-        FROM 'paths'
+        FROM paths
         WHERE path_ID = {0} 
         """.format(pathID))
 
         self.cur.execute("""
         DELETE 
-        FROM 'queries'  
+        FROM queries  
         WHERE path_ID = {0} 
         """.format(pathID))
 
@@ -95,11 +95,11 @@ class Storage:
 
     def DB_RemoveAllPath(self):
         self.cur.execute("""
-        DELETE FROM 'paths';
+        DELETE FROM paths;
         """)
 
         self.cur.execute("""
-        DELETE FROM 'queries';
+        DELETE FROM queries;
         """)
 
         self.conn.commit()
@@ -107,7 +107,7 @@ class Storage:
     def DB_GetMaxSize(self, pathID):
         results = self.cur.execute("""
                         SELECT MAX(queries.size)
-                        AS 'max_size'
+                        AS max_size
                         FROM queries
                         WHERE queries.path_ID = {0};
                         """.format(pathID)).fetchone()
