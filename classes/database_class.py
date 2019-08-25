@@ -116,17 +116,21 @@ class Storage:
         results = self.cur.execute("""
                                 SELECT FEC_ID
                                 FROM file_extensions
-                                WHERE file_extensions.FE_Name = {0}
+                                WHERE UPPER(file_extensions.FE_Name) = UPPER({0});
                                 """.format(FE_name)).fetchone()
         return results['FEC_ID']
 
     def DB_GetFE_ID(self, FE_name):
         results = self.cur.execute("""
-                                SELECT FE_ID
-                                FROM file_extensions
-                                WHERE file_extensions.FE_Name = {0}
-                                """.format(FE_name)).fetchone()
-        return results['FE_ID']
+        SELECT FE_ID
+        FROM file_extensions
+        WHERE UPPER(file_extensions.FE_Name) = UPPER('{0}');
+        """.format(FE_name)).fetchone()
+
+        if results is not None:
+            return results['FE_ID']
+        else:
+            return None
 
     def DB_AddSuffixCountSize(self, query_ID, FE_ID, count, size):
         self.cur.execute("""
@@ -256,11 +260,13 @@ class Storage:
                         FEC_ID, FE_Name
                         ) 
                         VALUES (
-                        99, {0}
+                        99, UPPER('{0}')
                         );
                         """.format(FE_Name))
 
+        lastID = self.cur.lastrowid
+
         self.conn.commit()
 
-        return self.cur.lastrowid
+        return lastID
 

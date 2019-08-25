@@ -108,7 +108,7 @@ class Path:
 
     def is_FE_Exist(self, FE_Name):
         myDB = Storage()
-        if myDB.DB_GetFE_ID(FE_Name):
+        if myDB.DB_GetFE_ID(FE_Name) is not None:
             return True
         else:
             return False
