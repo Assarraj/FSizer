@@ -222,12 +222,13 @@ class Storage:
 
         return results
 
-    def DB_GetAllFE_ByFEC(self):
+    def DB_GetAllFE_ByFEC(self, FEC_ID):
         results = self.cur.execute("""
-        SELECT FEC_ID, FEC_Name, FEC_Info
-        FROM file_extensions_category
-        ORDER BY FEC_ID;
-        """).fetchall()
+        SELECT FE_ID, FE_Name
+        FROM file_extensions
+        WHERE FEC_ID = {0}
+        ORDER BY FE_Name;
+        """.format(FEC_ID)).fetchall()
 
         return results
 
@@ -248,4 +249,18 @@ class Storage:
         """.format(query_ID)).fetchall()
 
         return results
+
+    def DB_AddUnkownFE(self,FE_Name):
+        self.cur.execute("""
+                        INSERT INTO file_extensions (
+                        FEC_ID, FE_Name
+                        ) 
+                        VALUES (
+                        99, {0}
+                        );
+                        """.format(FE_Name))
+
+        self.conn.commit()
+
+        return self.cur.lastrowid
 

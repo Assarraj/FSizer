@@ -26,6 +26,7 @@ class Path:
             return False
 
     def CalculateSize(self, path):
+        myDB = Storage()
         start = time.time()
         full_size = 0
 
@@ -37,7 +38,10 @@ class Path:
                     print(ee)
         end = time.time()
 
-        lastID = self.__Commit(path, full_size, end - start)
+        lastID = myDB.DB_AddSize(self.GetPathID(path),
+                                 round(time.time()),
+                                 full_size,
+                                 end-start)
 
         return full_size, lastID
 
@@ -60,14 +64,6 @@ class Path:
 
         return result_list
 
-    def __Commit(self, path, totalsize, calculationTime):
-        myDB = Storage()
-        lastID = myDB.DB_AddSize(self.GetPathID(path),
-                                 round(time.time()),
-                                 totalsize,
-                                 calculationTime)
-        return lastID
-
     def RemovePath(self, path):
         myDB = Storage()
         myDB.DB_RemovePath(self.GetPathID(path))
@@ -82,6 +78,40 @@ class Path:
         secondDate_DateObj = datetime.datetime.strptime(secondDate, '%Y-%m-%d')
 
         results = myDB.DB_GetQueryID_ByDate(firstDate_DateObj, secondDate_DateObj)
+
+    def calculate_files_suffix(self, path, query_ID):
+        myDB =Storage()
+        stat_count = {}
+        stat_size = {}
+
+        for root, sub, files in os.walk(path):
+            for file in files:
+                suffix = os.path.splitext(os.path.join(root, file))[1]
+                suffix = suffix.replace('.', '')
+                stat_count.setdefault(suffix, 0)
+                stat_count[suffix] = stat_count[suffix] + 1
+
+                stat_size.setdefault(suffix, 0)
+                stat_size[suffix] = stat_size[suffix] + os.path.getsize(os.path.join(root, file))
+
+        for key in stat_count.keys():
+            if self.is_FE_Exist(key) is True:
+                myDB.DB_AddSuffixCountSize(query_ID,
+                                           myDB.DB_GetFE_ID(key),
+                                           stat_count[key],
+                                           stat_size[key])
+            else:
+                myDB.DB_AddSuffixCountSize(query_ID,
+                                           myDB.DB_AddUnkownFE(key),
+                                           stat_count[key],
+                                           stat_size[key])
+
+    def is_FE_Exist(self, FE_Name):
+        myDB = Storage()
+        if myDB.DB_GetFE_ID(FE_Name):
+            return True
+        else:
+            return False
 
 
 

@@ -22,6 +22,7 @@ def scan(path):
         print("This {0} path had been added to Database".format(path))
 
     fullsize, lastID = myPath.CalculateSize(path)
+    myPath.calculate_files_suffix(path, lastID)
 
     print("Total size of {0} : {1}".format(path, myUni.beauty_size(fullsize)))
 
