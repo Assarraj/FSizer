@@ -76,5 +76,13 @@ class Path:
         myDB = Storage()
         return myDB.DB_GetMaxSize(self.GetPathID(path))
 
+    def Get_QueryID_ByDate(self, firstDate, secondDate):
+        myDB = Storage()
+        firstDate_DateObj = datetime.datetime.strptime(firstDate, '%Y-%m-%d')
+        secondDate_DateObj = datetime.datetime.strptime(secondDate, '%Y-%m-%d')
+
+        results = myDB.DB_GetQueryID_ByDate(firstDate_DateObj, secondDate_DateObj)
+
+
 
 
