@@ -124,5 +124,16 @@ def export_report():
     myReport.RP_Commit()
 
 
+@cli.command()
+def add_FEC():
+    """Add a new file extension category"""
+    FEC_Name = input("Insert file extension category name: ")
+    FEC_Info = input("Insert file extension category info: ")
+
+    myDB = Storage()
+    myDB.DB_AddFEC(FEC_Name, FEC_Info)
+
+
+
 if __name__ == "__main__":
     cli()

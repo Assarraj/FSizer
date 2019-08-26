@@ -178,7 +178,7 @@ class Storage:
                 FEC_Name, FEC_Info
                 ) 
                 VALUES (
-                {0}, {1}
+                '{0}', '{1}'
                 );
                 """.format(FEC_Name, FEC_Info))
 
@@ -190,7 +190,7 @@ class Storage:
                 FEC_ID, FE_Name
                 ) 
                 VALUES (
-                {0}, {1}
+                '{0}', '{1}'
                 );
                 """.format(FEC_ID, FE_Name))
 
