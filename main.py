@@ -127,12 +127,36 @@ def export_report():
 @cli.command()
 def add_FEC():
     """Add a new file extension category"""
+    FEC_ID = input("Insert file extension category ID: ")
+    FE_Name = input("Insert file extension name: ")
+
+    myDB = Storage()
+    myDB.DB_AddFEC(FEC_ID, FE_Name)
+
+
+@cli.command()
+def add_FE():
+    """Add a new file extension"""
     FEC_Name = input("Insert file extension category name: ")
     FEC_Info = input("Insert file extension category info: ")
 
     myDB = Storage()
     myDB.DB_AddFEC(FEC_Name, FEC_Info)
 
+
+@cli.command()
+def list_FEC():
+    """List All Stored extension category"""
+    myDB = Storage()
+    table = PrettyTable()
+
+    table.field_names = ["#", "Name", "Info"]
+    table.align["Info"] = "l"
+
+    for row in myDB.DB_GetAllFEC():
+        table.add_row([row['FEC_ID'], row['FEC_Name'], row['FEC_Info']])
+
+    print(table)
 
 
 if __name__ == "__main__":
