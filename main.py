@@ -137,11 +137,11 @@ def add_FEC():
 @cli.command()
 def add_FE():
     """Add a new file extension"""
-    FEC_Name = input("Insert file extension category name: ")
-    FEC_Info = input("Insert file extension category info: ")
+    FEC_ID = input("Insert file extension category ID: ")
+    FE_name = input("Insert file extension name: ")
 
     myDB = Storage()
-    myDB.DB_AddFEC(FEC_Name, FEC_Info)
+    myDB.DB_AddFEC(FEC_ID, FE_name)
 
 
 @cli.command()
@@ -158,6 +158,21 @@ def list_FEC():
 
     print(table)
 
+
+@cli.command()
+def list_FE():
+    """List All Stored extension for a specific category"""
+    myDB = Storage()
+    table = PrettyTable()
+
+    FEC_ID = input("Insert file extension category ID: ")
+
+    table.field_names = ["#", "Name"]
+
+    for row in myDB.DB_GetAllFE_ByFEC(FEC_ID):
+        table.add_row([row['FE_ID'], row['FE_Name']])
+
+    print(table)
 
 if __name__ == "__main__":
     cli()
