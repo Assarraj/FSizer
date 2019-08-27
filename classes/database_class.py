@@ -91,26 +91,21 @@ class Storage:
 
         self.conn.commit()
 
-    def DB_RemoveAllPath(self):
-        self.__DB_RemoveAllPaths()
-        self.__DB_RemoveAllQueries()
-        self.__DB_RemoveAllQFE()
-
-    def __DB_RemoveAllPaths(self):
+    def DB_RemoveAllPaths(self):
         self.cur.execute("""
                 DELETE FROM paths;
                 """)
 
         self.conn.commit()
 
-    def __DB_RemoveAllQueries(self):
+    def DB_RemoveAllQueries(self):
         self.cur.execute("""
                 DELETE FROM queries;
                 """)
 
         self.conn.commit()
 
-    def __DB_RemoveAllQFE(self):
+    def DB_RemoveAllQFE(self):
         self.cur.execute("""
                 DELETE FROM query_file_extensions;
                 """)

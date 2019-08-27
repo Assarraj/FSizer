@@ -100,13 +100,17 @@ def remove_all(yes):
     """Remove all data stored in DB"""
     myDB = Storage()
     if yes is True:
-        myDB.DB_RemoveAllPath()
+        myDB.DB_RemoveAllPaths()
+        myDB.DB_RemoveAllQueries()
+        myDB.DB_RemoveAllQFE()
         print("done")
     else:
         message = "Are you sure you want to remove everything? [Y/N]"
         answer = input(message)
         if answer.upper() == "Y":
-            myDB.DB_RemoveAllPath()
+            myDB.DB_RemoveAllPaths()
+            myDB.DB_RemoveAllQueries()
+            myDB.DB_RemoveAllQFE()
             print("done")
         else:
             print("Ok, nothing had been removed")
