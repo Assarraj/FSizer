@@ -221,22 +221,25 @@ class Storage:
 
     def DB_RemoveFEC(self, FEC_ID):
         self.cur.execute("""
-                DELETE FROM file_extensions_category
-                WHERE file_extensions_category.FEC_ID = {0};
-                """.format(FEC_ID))
+        DELETE FROM file_extensions_category
+        WHERE file_extensions_category.FEC_ID = {0};
+        """.format(FEC_ID))
 
+        self.conn.commit()
+
+    def DB_RemoveFE_ByFEC(self, FEC_ID):
         self.cur.execute("""
-                        DELETE FROM file_extensions
-                        WHERE file_extensions.FEC_ID = {0};
-                        """.format(FEC_ID))
+        DELETE FROM file_extensions
+        WHERE file_extensions.FEC_ID = {0};
+        """.format(FEC_ID))
 
         self.conn.commit()
 
     def DB_RemoveFE(self, FE_ID):
         self.cur.execute("""
-                        DELETE FROM file_extensions
-                        WHERE file_extensions.FE_ID = {0};
-                        """.format(FE_ID))
+        DELETE FROM file_extensions
+        WHERE file_extensions.FE_ID = {0};
+        """.format(FE_ID))
 
         self.conn.commit()
 

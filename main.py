@@ -178,5 +178,20 @@ def list_FE():
 
     print(table)
 
+@cli.command()
+@click.argument('FE_ID')
+def remove_FE(FE_ID):
+    """Remove a specific File Extension"""
+    myPath = Path()
+    myPath.remove_FE(FE_ID)
+
+
+@cli.command()
+@click.argument('FEC_ID')
+def remove_FEC(FEC_ID):
+    """Remove a specific File Extension Category"""
+    myPath = Path()
+    myPath.remove_FEC(FEC_ID)
+
 if __name__ == "__main__":
     cli()

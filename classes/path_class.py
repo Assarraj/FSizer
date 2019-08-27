@@ -115,6 +115,15 @@ class Path:
         else:
             return False
 
+    def remove_FE(self, FE_ID):
+        myDB = Storage()
+        myDB.DB_RemoveFE(FE_ID)
+
+    def remove_FEC(self, FEC_ID):
+        myDB = Storage()
+        myDB.DB_RemoveFEC(FEC_ID)
+        myDB.DB_RemoveFE_ByFEC(FEC_ID)
+
 
 
 
