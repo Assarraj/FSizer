@@ -67,6 +67,8 @@ class Path:
     def RemovePath(self, path):
         myDB = Storage()
         myDB.DB_RemovePath(self.GetPathID(path))
+        myDB.DB_RemoveQuery(self.GetPathID(path))
+        myDB.DB_RemoveQFE(self.GetPathID(path))
 
     def GetMaxSize(self, path):
         myDB = Storage()

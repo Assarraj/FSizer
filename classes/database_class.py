@@ -83,11 +83,23 @@ class Storage:
         WHERE path_ID = {0} 
         """.format(pathID))
 
+        self.conn.commit()
+
+    def DB_RemoveQuery(self, pathID):
         self.cur.execute("""
-        DELETE 
-        FROM queries  
-        WHERE path_ID = {0} 
-        """.format(pathID))
+                DELETE 
+                FROM queries  
+                WHERE path_ID = {0} 
+                """.format(pathID))
+
+        self.conn.commit()
+
+    def DB_RemoveQFE(self, pathID):
+        self.cur.execute("""
+                DELETE 
+                FROM query_file_extensions  
+                WHERE path_ID = {0} 
+                """.format(pathID))
 
         self.conn.commit()
 
