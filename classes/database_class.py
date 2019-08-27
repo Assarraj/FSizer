@@ -137,10 +137,18 @@ class Storage:
 
     def DB_GetFEC_ID(self, FE_name):
         results = self.cur.execute("""
-                                SELECT FEC_ID
-                                FROM file_extensions
-                                WHERE UPPER(file_extensions.FE_Name) = UPPER({0});
-                                """.format(FE_name)).fetchone()
+        SELECT FEC_ID
+        FROM file_extensions
+        WHERE UPPER(file_extensions.FE_Name) = UPPER({0});
+         """.format(FE_name)).fetchone()
+        return results['FEC_ID']
+
+    def DB_GetFECID_ByFECName(self, FEC_name):
+        results = self.cur.execute("""
+        SELECT FEC_ID
+        FROM file_extensions_category
+        WHERE UPPER(file_extensions_category.FEC_Name) = UPPER({0});
+         """.format(FEC_name)).fetchone()
         return results['FEC_ID']
 
     def DB_GetFE_ID(self, FE_name):

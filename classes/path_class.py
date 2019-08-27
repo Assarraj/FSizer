@@ -81,6 +81,8 @@ class Path:
 
         results = myDB.DB_GetQueryID_ByDate(firstDate_DateObj, secondDate_DateObj)
 
+        return results
+
     def calculate_files_suffix(self, path, query_ID):
         myDB =Storage()
         stat_count = {}
@@ -111,6 +113,13 @@ class Path:
     def is_FE_Exist(self, FE_Name):
         myDB = Storage()
         if myDB.DB_GetFE_ID(FE_Name) is not None:
+            return True
+        else:
+            return False
+
+    def is_FEC_Exist(self, FEC_Name):
+        myDB = Storage()
+        if myDB.DB_GetFECID_ByFECName(FEC_Name) is not None:
             return True
         else:
             return False

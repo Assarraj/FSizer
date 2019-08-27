@@ -131,11 +131,16 @@ def export_report():
 @cli.command()
 def add_FEC():
     """Add a new file extension category"""
-    FEC_ID = input("Insert file extension category ID: ")
-    FE_Name = input("Insert file extension name: ")
+    FEC_Name = input("Insert file extension category name: ")
+    FEC_Info = input("Insert file extension category Info: ")
 
     myDB = Storage()
-    myDB.DB_AddFEC(FEC_ID, FE_Name)
+    myPath = Path()
+
+    if myPath.is_FEC_Exist(FEC_Name) is False:
+        myDB.DB_AddFEC(FEC_Name, FEC_Info)
+    else:
+        print("This file extension category is already exist!!")
 
 
 @cli.command()
@@ -145,7 +150,12 @@ def add_FE():
     FE_name = input("Insert file extension name: ")
 
     myDB = Storage()
-    myDB.DB_AddFEC(FEC_ID, FE_name)
+    myPath = Path()
+
+    if myPath.is_FE_Exist(FE_name) is False:
+        myDB.DB_AddFEC(FEC_ID, FE_name)
+    else:
+        print("This file extension is already exist!!")
 
 
 @cli.command()
@@ -178,6 +188,7 @@ def list_FE():
 
     print(table)
 
+
 @cli.command()
 @click.argument('FE_ID')
 def remove_FE(FE_ID):
@@ -192,6 +203,7 @@ def remove_FEC(FEC_ID):
     """Remove a specific File Extension Category"""
     myPath = Path()
     myPath.remove_FEC(FEC_ID)
+
 
 if __name__ == "__main__":
     cli()
