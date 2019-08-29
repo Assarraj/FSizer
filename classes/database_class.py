@@ -281,7 +281,7 @@ class Storage:
 
     def DB_GetFE_SizeCount(self, query_ID):
         results = self.cur.execute("""
-        SELECT count, size
+        SELECT FE_ID, count, size
         FROM query_file_extensions
         WHERE query_file_extensions.query_ID = {0};
         """.format(query_ID)).fetchall()
@@ -304,3 +304,50 @@ class Storage:
 
         return lastID
 
+    def DB_GetLastQueryID(self,Path_ID):
+        results = self.cur.execute("""
+        SELECT Max(queries.query_ID)
+        AS MaxQueryID
+        FROM queries
+        WHERE queries.path_ID = {0};
+        """.format(Path_ID)).fetchone()
+
+        return results['MaxQueryID']
+
+    def DB_GetFE(self, FE_ID):
+        results = self.cur.execute("""
+        SELECT FE_Name, FEC_ID
+        FROM file_extensions
+        WHERE file_extensions.FE_ID = {0};
+        """.format(FE_ID)).fetchone()
+
+        return results
+
+    def DB_GetFEName(self, FE_ID):
+        results = self.cur.execute("""
+        SELECT FE_Name
+        FROM file_extensions
+        WHERE file_extensions.FE_ID = {0};
+        """.format(FE_ID)).fetchone()
+
+        return results['FE_Name']
+
+    def DB_GetQFE_ByQueryID(self,query_ID, limit = 10):
+        results = self.cur.execute("""
+        SELECT FE_ID, count, size
+        FROM query_file_extensions
+        WHERE query_file_extensions.query_ID = {0}
+        ORDER BY query_file_extensions.size DESC
+        LIMIT {1};
+        """.format(query_ID, limit)).fetchall()
+
+        return results
+
+    def DB_GetQueryDate(self, query_ID):
+        results = self.cur.execute("""
+        SELECT time_stamp
+        FROM queries
+        WHERE queries.query_ID = {0};
+        """.format(query_ID)).fetchone()
+
+        return results['time_stamp']

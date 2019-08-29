@@ -100,3 +100,31 @@ class Report:
     def RP_Commit(self):
         self.myMD.MD_commit()
 
+    def RP_InsertFileTypes(self):
+        self.myMD.MD_header(1, "File Type Information")
+
+        for path in self.myDB.DB_GetAllPaths():
+            myPath = Path()
+
+            self.myMD.MD_header(2,"Biggest 10 files extensions inside " + path['path'])
+
+            QueryID = self.myDB.DB_GetLastQueryID(myPath.GetPathID(path['path']))
+
+            table = []
+
+            for item in self.myDB.DB_GetQFE_ByQueryID(QueryID):
+                table.append({"File Extension": self.myDB.DB_GetFEName(item['FE_ID']),
+                              "Count": item['count'],
+                              "Size": self.myUnit.beauty_size(item['size'])})
+
+            self.myMD.MD_table(table)
+
+
+
+
+
+
+
+
+
+
