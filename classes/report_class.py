@@ -133,14 +133,22 @@ class Report:
             for FEC in self.myDB.DB_GetAllFEC():
                 FEC_ID = FEC['FEC_ID']
                 SumSize = self.myDB.DB_GetSumSize_ByFEC_QFE(FEC_ID, QueryID)
+                KeyItems.append(FEC['FEC_Name'])
+                ValueItems.append(SumSize)
 
+                """
                 if SumSize > 0:
                     KeyItems.append(FEC['FEC_Name'])
                     ValueItems.append(SumSize)
+                """
 
-            filename = self.__RP_Draw_PieChart(path['path'], KeyItems, ValueItems)
+            filename = self.__RP_Draw_BarChart(path['path'], KeyItems, ValueItems)
+
             self.myMD.MD_header(2, path['path'])
-            self.myMD.MD_image('', filename, newline=True)
+            if filename is not None:
+                self.myMD.MD_image('', filename, newline=True)
+            else:
+                self.myMD.MD_text("This path is empty", True)
 
 
     def __RP_Draw_PieChart(self, path, KeyItems, ValueItems):
@@ -161,6 +169,38 @@ class Report:
         plt.close()
 
         return filename
+
+    def __RP_Draw_BarChart(self, path, KeyItems, ValueItems):
+        plt.title(path)
+
+        ValueItems_Percent =[]
+        ValueItems_Sum = sum(ValueItems)
+
+        if ValueItems_Sum > 0:
+
+            for item in ValueItems:
+                ValueItems_Percent.append(round((item/ValueItems_Sum)*100))
+
+            plt.ylabel("Percent")
+            plt.ylim(0, 100)
+            #plt.grid()
+            plt.xticks(rotation=60)
+
+            plt.bar(KeyItems,
+                    ValueItems_Percent,
+                    color=(0.1, 0.1, 0.1, 0.1),
+                    edgecolor='blue')
+
+            filename = self.myMD.MD_getFoldername() + "_Pie_" + str(round(time() + random.random() * 10000)) + ".png"
+            plt.savefig(os.path.join(self.myMD.MD_getReportpath(), filename),
+                        format="png",
+                        dpi=300)
+            plt.close()
+
+            return filename
+        else:
+            return None
+
 
 
 
