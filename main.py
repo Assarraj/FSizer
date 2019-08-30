@@ -124,7 +124,7 @@ def export_report():
 
     myReport.RP_InsertIndex()
     myReport.RP_InsertSharedPaths()
-    #myReport.RP_InsertMoreInormation()
+    myReport.RP_InsertMoreInormation()
     myReport.RP_InsertFileTypes()
     myReport.RP_InsertPieChart_FEC_Size()
 
