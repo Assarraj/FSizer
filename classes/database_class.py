@@ -351,3 +351,22 @@ class Storage:
         """.format(query_ID)).fetchone()
 
         return results['time_stamp']
+
+    def DB_GetSumSize_ByFEC_QFE(self, FEC_ID, query_ID):
+        results = self.cur.execute("""
+        SELECT sum(query_file_extensions.size) AS SumSize
+        FROM query_file_extensions
+        WHERE query_file_extensions.query_ID = {0} AND 
+        query_file_extensions.FE_ID IN (
+            SELECT file_extensions.FE_ID
+            FROM file_extensions
+            WHERE file_extensions.FEC_ID = {1}
+        );
+        """.format(query_ID, FEC_ID)).fetchone()
+
+        if results['SumSize'] is None:
+            return 0
+        else:
+            return results['SumSize']
+
+

@@ -119,6 +119,50 @@ class Report:
 
             self.myMD.MD_table(table)
 
+    def RP_InsertPieChart_FEC_Size(self):
+        self.myMD.MD_header(1, "File Type Graphs")
+
+        for path in self.myDB.DB_GetAllPaths():
+            myPath = Path()
+
+            QueryID = self.myDB.DB_GetLastQueryID(myPath.GetPathID(path['path']))
+
+            KeyItems = []
+            ValueItems = []
+
+            for FEC in self.myDB.DB_GetAllFEC():
+                FEC_ID = FEC['FEC_ID']
+                SumSize = self.myDB.DB_GetSumSize_ByFEC_QFE(FEC_ID, QueryID)
+
+                if SumSize > 0:
+                    KeyItems.append(FEC['FEC_Name'])
+                    ValueItems.append(SumSize)
+
+            filename = self.__RP_Draw_PieChart(path['path'], KeyItems, ValueItems)
+            self.myMD.MD_header(2, path['path'])
+            self.myMD.MD_image('', filename, newline=True)
+
+
+    def __RP_Draw_PieChart(self, path, KeyItems, ValueItems):
+        plt.title(path)
+
+        plt.pie(ValueItems,
+                autopct='%1.0f',
+                startangle=90,
+                labeldistance=5.05)
+
+        plt.axis('equal')
+        plt.legend(KeyItems)
+
+        filename = self.myMD.MD_getFoldername() + "_Pie_" + str(round(time() + random.random() * 10000)) + ".png"
+        plt.savefig(os.path.join(self.myMD.MD_getReportpath(), filename),
+                    format="png",
+                    dpi=300)
+        plt.close()
+
+        return filename
+
+
 
 
 
