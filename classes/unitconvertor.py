@@ -33,7 +33,7 @@ class UniConv:
 
         return "{0:05.2f} {1}".format(calc_size, unit)
 
-    def select_size(self, givensize, choosenunit = 0):
+    def select_size(self, givensize, choosenunit=3):
         calc_size = givensize
         for i in range(choosenunit):
             calc_size = calc_size / 1024
