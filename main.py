@@ -122,16 +122,27 @@ def export_report():
     """This will export a report using Markdown format"""
 
     myReport = Report()
+    myMD = MarkDown()
 
-    myReport.get_pc_information()
+    myMD.MD_header(1, "Index")
+    myMD.MD_text("[toc]", True)
+    myMD.MD_horizontal_rule()
 
-    myReport.RP_InsertIndex()
+    myMD.MD_header(1, "Computer General Information")
+    table = myReport.get_pc_information()
+    myMD.MD_table(table)
+
+    myMD.MD_header(1, "Computer Partitions Information")
+    table = myReport.get_logical_disk()
+    myMD.MD_table(table)
+
+    """myReport.RP_InsertIndex()
     myReport.RP_InsertSharedPaths()
     myReport.RP_InsertMoreInormation()
     myReport.RP_InsertFileTypes()
     myReport.RP_InsertPieChart_FEC_Size()
 
-    myReport.RP_Commit()
+    myReport.RP_Commit()"""
 
 
 @cli.command()

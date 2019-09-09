@@ -1,5 +1,4 @@
 from classes.path_class import Path
-from classes.markdown_class import MarkDown
 from classes.database_class import Storage
 from classes.unitconvertor import UniConv
 from matplotlib import pyplot as plt
@@ -12,15 +11,13 @@ import wmi
 class Report:
 
     def __init__(self):
-        self.myMD = MarkDown()
         self.myDB = Storage()
         self.myUnit = UniConv()
         self.myWMI = wmi.WMI()
 
-        self.__base_file_name = self.myMD.MD_getFoldername()
-
     def get_pc_information(self):
         table = []
+
         table.append({"Item": "Computer Name",
                       "Value": self.myWMI.Win32_ComputerSystem()[0].Caption})
         table.append({"Item": "Domain Name",
@@ -28,8 +25,33 @@ class Report:
         table.append({"Item": "Computer Model",
                       "Value": self.myWMI.Win32_ComputerSystem()[0].Model})
 
-        self.myMD.MD_table(table)
-        self.myMD.MD_horizontal_rule()
+        return table
+
+    def get_logical_disk(self):
+        table = []
+
+        logical_information = self.myWMI.Win32_LogicalDisk()
+
+        for item in logical_information:
+            row = {}
+            if item.MediaType == 12:
+                row["Drive Letter"] = item.DeviceID
+
+                unit = self.myUnit.max_unit(int(item.Size))
+                unit_name = self.myUnit.get_unit_name(unit)
+
+                total_size = "{0} {1}".format(round(self.myUnit.select_size(int(item.Size), unit), 2), unit_name)
+                free_space = "{0} {1}".format(round(self.myUnit.select_size(int(item.FreeSpace), unit), 2), unit_name)
+                free_perc = "{0} %".format(round((int(item.FreeSpace)/int(item.Size)) * 100, 2))
+
+                row["Total Size"] = total_size
+                row["Free Space"] = free_space
+                row["Free %"] = free_perc
+
+            table.append(row)
+
+        return table
+
 
 
 
