@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 from time import time
 import os
 import random
+import wmi
 
 
 class Report:
@@ -14,6 +15,25 @@ class Report:
         self.myMD = MarkDown()
         self.myDB = Storage()
         self.myUnit = UniConv()
+        self.myWMI = wmi.WMI()
+
+        self.__base_file_name = self.myMD.MD_getFoldername()
+
+    def get_pc_information(self):
+        table = []
+        table.append({"Item": "Computer Name",
+                      "Value": self.myWMI.Win32_ComputerSystem()[0].Caption})
+        table.append({"Item": "Domain Name",
+                      "Value": self.myWMI.Win32_ComputerSystem()[0].Domain})
+        table.append({"Item": "Computer Model",
+                      "Value": self.myWMI.Win32_ComputerSystem()[0].Model})
+
+        self.myMD.MD_table(table)
+        self.myMD.MD_horizontal_rule()
+
+
+
+    #------------------------------------
 
     def RP_InsertIndex(self):
         self.myMD.MD_header(1, 'Index')
@@ -79,20 +99,26 @@ class Report:
 
         plt.title(path)
 
-        plt.plot(timeStamp, sizeList,
-                 marker='o', markerfacecolor='blue',
-                 markersize=12, color='skyblue',
-                 linewidth=4)
+        plt.plot(timeStamp,
+                 sizeList,
+                 marker='o',
+                 markerfacecolor='blue',
+                 markersize=5,
+                 color='skyblue',
+                 linewidth=1, )
 
         plt.xlabel("Date")
         plt.ylabel("Size " + self.myUnit.get_unit_name(unit))
+        plt.xticks(rotation=60)
 
         plt.grid(True)
 
         filename = self.myMD.MD_getFoldername() + "_" + str(round(time() + random.random()*10000)) + ".png"
+
         plt.savefig(os.path.join(self.myMD.MD_getReportpath(), filename),
                     format="png",
-                    dpi=300)
+                    dpi=300,
+                    bbox_inches='tight')
         plt.close()
 
         return filename
@@ -191,10 +217,11 @@ class Report:
                     color=(0.1, 0.1, 0.1, 0.1),
                     edgecolor='blue')
 
-            filename = self.myMD.MD_getFoldername() + "_Pie_" + str(round(time() + random.random() * 10000)) + ".png"
+            filename = self.myMD.MD_getFoldername() + "_Bar_" + str(round(time() + random.random() * 10000)) + ".png"
             plt.savefig(os.path.join(self.myMD.MD_getReportpath(), filename),
                         format="png",
-                        dpi=300)
+                        dpi=300,
+                        bbox_inches='tight')
             plt.close()
 
             return filename

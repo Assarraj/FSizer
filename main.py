@@ -4,6 +4,7 @@ from classes.path_class import Path
 from classes.database_class import Storage
 from classes.report_class import Report
 from classes.unitconvertor import UniConv
+from classes.markdown_class import MarkDown
 
 
 @click.group()
@@ -121,6 +122,8 @@ def export_report():
     """This will export a report using Markdown format"""
 
     myReport = Report()
+
+    myReport.get_pc_information()
 
     myReport.RP_InsertIndex()
     myReport.RP_InsertSharedPaths()
