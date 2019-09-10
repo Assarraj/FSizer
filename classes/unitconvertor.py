@@ -41,15 +41,29 @@ class UniConv:
         return calc_size
 
     def max_unit(self, givensize):
-        i = 0
-        calc_size = givensize
-        while True:
-            if calc_size >= 1024:
-                calc_size = calc_size / 1024
-                i = i + 1
-            else:
-                break
-        return i
+        if type(givensize) == int:
+            i = 0
+            calc_size = givensize
+            while True:
+                if calc_size >= 1024:
+                    calc_size = calc_size / 1024
+                    i = i + 1
+                else:
+                    break
+            return i
+        elif type(givensize) == list:
+            value = []
+            for item in givensize:
+                i = 0
+                calc_size = item
+                while True:
+                    if calc_size >= 1024:
+                        calc_size = calc_size / 1024
+                        i = i + 1
+                    else:
+                        break
+                value.append(i)
+            return max(value)
 
     def get_unit_name(self, i):
         if i == 0:
