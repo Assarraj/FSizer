@@ -369,4 +369,35 @@ class Storage:
         else:
             return results['SumSize']
 
+    def DB_GetSumSize_ByDate(self, duration):
+        results = self.cur.execute("""
+        SELECT date(queries.time_stamp, 'unixepoch') AS time_stamp,
+        sum(queries.size) AS size
+        FROM queries
+        WHERE date(queries.time_stamp, 'unixepoch') >= date('now', '{0}') 
+        GROUP BY date(queries.time_stamp, 'unixepoch');
+        """.format(self.DB_GetDurationValue(duration))).fetchall()
+
+        return results
+
+    def DB_GetDurationValue(self, duration):
+        if duration == "week":
+            return "-7 days"
+        elif duration == "month":
+            return "-30 days"
+
+    def DB_GetPathSizes_ByDate(self, path_ID, duration):
+        results = self.cur.execute("""
+        SELECT date(queries.time_stamp, 'unixepoch') AS time_stamp,
+        queries.size
+        FROM queries
+        WHERE (date(queries.time_stamp, 'unixepoch') >= date('now', '{0}')) AND 
+        (queries.path_ID = '{1}') 
+        GROUP BY date(queries.time_stamp, 'unixepoch');
+        """.format(self.DB_GetDurationValue(duration), path_ID)).fetchall()
+
+        return results
+
+
+
 

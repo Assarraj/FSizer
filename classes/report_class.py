@@ -1,6 +1,7 @@
 from classes.path_class import Path
 from classes.database_class import Storage
 from classes.unitconvertor import UniConv
+from classes.computer_class import Computer
 from matplotlib import pyplot as plt
 from time import time
 import os
@@ -51,6 +52,95 @@ class Report:
             table.append(row)
 
         return table
+
+    def get_growth(self, duration):
+        table = []
+        results = self.myDB.DB_GetSumSize_ByDate(duration)
+        sizes = []
+        for item in results:
+            sizes.append(item["size"])
+
+        unit_value = self.myUnit.max_unit(sizes)
+
+        for item in results:
+            row = {}
+            row["Date"] = item["time_stamp"]
+            row["Size"] = round(self.myUnit.select_size(item["size"]), unit_value)
+            table.append(row)
+
+        return table, self.myUnit.get_unit_name(unit_value)
+
+    def draw_growth(self, table, unit_name,  report_path, basename):
+        x = []
+        y = []
+        for row in table:
+            x.append(row["Date"])
+            y.append(row["Size"])
+
+        plt.ylim(min(y) - 5, max(y) + 5)
+
+        plt.plot(x,
+                 y,
+                 marker='o',
+                 markerfacecolor='blue',
+                 markersize=5,
+                 color='skyblue',
+                 linewidth=1, )
+
+        plt.xlabel("Date")
+        plt.ylabel("Size " + unit_name)
+
+        plt.xticks(rotation=60)
+
+        plt.grid(True)
+
+        filename = basename + "_" + str(round(time() + random.random() * 10000)) + ".png"
+
+        plt.savefig(os.path.join(report_path, filename),
+                    format="png",
+                    dpi=300,
+                    bbox_inches='tight')
+        plt.close()
+
+        return filename
+
+    def shared_paths_information(self, duration):
+        table = []
+        myPath = Path()
+        paths = self.myDB.DB_GetAllPaths()
+
+        for path in paths:
+            row = {}
+            sizes = self.myDB.DB_GetPathSizes_ByDate(myPath.GetPathID(path['path']), duration)
+
+            row['Shared Path'] = path['path']
+
+            lst = []
+            for size in sizes:
+                lst.append(size['size'])
+            unit = self.myUnit.max_unit(lst)
+            unit_name = self.myUnit.get_unit_name(unit)
+
+            for size in sizes:
+                row[str(size['time_stamp'])] = "{0} {1}".format(round(self.myUnit.select_size(size['size'], unit), 2), unit_name)
+
+            table.append(row)
+
+        return table
+
+
+    def actual_shared_paths(self):
+        myComputer = Computer()
+        shared = myComputer.get_shared_paths()
+
+        for item in shared:
+            if self.myDB.DB_is_new(item['Path']) is not True:
+                item['DB'] = ":heavy_check_mark:"
+            else:
+                item['DB'] = ":x:"
+
+        return shared
+
 
 
 
