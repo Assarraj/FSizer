@@ -54,15 +54,18 @@ class UniConv:
         elif type(givensize) == list:
             value = []
             for item in givensize:
-                i = 0
-                calc_size = item
-                while True:
-                    if calc_size >= 1024:
-                        calc_size = calc_size / 1024
-                        i = i + 1
-                    else:
-                        break
-                value.append(i)
+                if item == "-":
+                    continue
+                else:
+                    i = 0
+                    calc_size = item
+                    while True:
+                        if calc_size >= 1024:
+                            calc_size = calc_size / 1024
+                            i = i + 1
+                        else:
+                            break
+                    value.append(i)
             return max(value)
 
     def get_unit_name(self, i):

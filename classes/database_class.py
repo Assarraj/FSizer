@@ -388,15 +388,19 @@ class Storage:
 
     def DB_GetPathSizes_ByDate(self, path_ID, duration):
         results = self.cur.execute("""
-        SELECT date(queries.time_stamp, 'unixepoch') AS time_stamp,
-        queries.size
+        SELECT queries.size AS size
         FROM queries
-        WHERE (date(queries.time_stamp, 'unixepoch') >= date('now', '{0}')) AND 
-        (queries.path_ID = '{1}') 
-        GROUP BY date(queries.time_stamp, 'unixepoch');
-        """.format(self.DB_GetDurationValue(duration), path_ID)).fetchall()
+        WHERE (queries.path_ID == '{0}') AND 
+        (date(queries.time_stamp, 'unixepoch') == '{1}');
+        """.format(path_ID, duration)).fetchone()
 
-        return results
+        if results is None:
+            return None
+        else:
+            return results['size']
+
+        return 0
+
 
 
 

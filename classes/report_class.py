@@ -7,6 +7,7 @@ from time import time
 import os
 import random
 import wmi
+import datetime
 
 
 class Report:
@@ -108,21 +109,39 @@ class Report:
         table = []
         myPath = Path()
         paths = self.myDB.DB_GetAllPaths()
+        dates = []
+
+        for i in range(7):
+            date = datetime.datetime.now() - datetime.timedelta(days=i)
+            date = date.strftime('%Y-%m-%d')
+            dates.append(date)
+        dates.reverse()
 
         for path in paths:
             row = {}
-            sizes = self.myDB.DB_GetPathSizes_ByDate(myPath.GetPathID(path['path']), duration)
+            sizes = []
+
+            for date in dates:
+                res = self.myDB.DB_GetPathSizes_ByDate(myPath.GetPathID(path['path']), date)
+                if res is None:
+                    sizes.append({"size": "-", "time_stamp": date})
+                else:
+                    sizes.append({"size": int(res), "time_stamp": date})
 
             row['Shared Path'] = path['path']
 
             lst = []
             for size in sizes:
                 lst.append(size['size'])
+
             unit = self.myUnit.max_unit(lst)
             unit_name = self.myUnit.get_unit_name(unit)
 
             for size in sizes:
-                row[str(size['time_stamp'])] = "{0} {1}".format(round(self.myUnit.select_size(size['size'], unit), 2), unit_name)
+                if size['size'] != "-":
+                    row[str(size['time_stamp'])] = "{0} {1}".format(round(self.myUnit.select_size(size['size'], unit), 2), unit_name)
+                else:
+                    row[str(size['time_stamp'])] = "-"
 
             table.append(row)
 
